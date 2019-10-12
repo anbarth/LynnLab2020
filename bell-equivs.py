@@ -66,10 +66,10 @@ sp = [[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
        [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
        [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1]]
+       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]]
 
 gens = [ic, ip, sc, sp]
 
@@ -90,24 +90,34 @@ def sortSubsets():
     else:
         #retrieve the next bucket
         newBucket=[]
-        fillBucket(newBucket, i)
+        fillBucket(newBucket, [i])
         bucketList.append(newBucket)
 
 
 
 # When first called in the main function, fill up an empty bucket. When called recursively, fill up same bucket.
-def fillBucket(bucket, i):
-    # go through the generators for each state
-    for gen in gens:
-        newSubset = numpy.matmul(gen, indexToSubset(i))
-        newIndex = subsetToIndex(newSubset)
-        # if newIndex hasn't been marked, then add to bucket the same bucket and recurse.
-        if usedList[newIndex]==0:
-            bucket.append(newIndex)
-            fillBucket(bucket, newIndex)
-        # if the newIndex has been marked, then update the bucketList
-        #else:
-        #    BucketList[currentBucketIndex].extend(bucket)
+def fillBucket(bucket, indicesToExplore):
+    nextIndicesToExplore = []
+    for index in indicesToExplore:
+        # go through the generators for each state
+
+        for gen in gens:
+            
+            newSubset = numpy.matmul(gen, indexToSubset(index))
+            print(newSubset)
+            newIndex = subsetToIndex(newSubset)
+            # if newIndex hasn't been marked, then add to bucket the same bucket and plan to explore this new state
+            
+            if usedList[newIndex]==0:
+                #print("aaaa")
+                bucket.append(newIndex)
+                nextIndicesToExplore.append(newIndex)
+                usedList[newIndex] = 1
+            # if the newIndex has been marked, then update the bucketList
+            #else:
+            #    BucketList[currentBucketIndex].extend(bucket)
+    if len(nextIndicesToExplore) > 0:
+        fillBucket(bucket, nextIndicesToExplore)
 
 
 
