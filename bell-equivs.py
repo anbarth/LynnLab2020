@@ -1,7 +1,6 @@
 import numpy
 from scipy.special import comb
 
-## all of these are the TRANSPOSES of what they should be
 ic = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
@@ -74,6 +73,7 @@ sp = [[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 
 gens = [ic, ip, sc, sp]
 
+usedList = [0] * 11440
 
 #initialize 27 empty buckets in a bucket list
 BucketList = [[], [], [], [], [], [], [], [], [],
@@ -84,7 +84,9 @@ BucketList = [[], [], [], [], [], [], [], [], [],
 
 # Main function to fill up all 27 buckets
 def sortSubsets():
-    if usedList(i) == 1: continue
+    if usedList(i) == 1: 
+        print('fix me later')
+        #continue
     else:
         #retrieve the next bucket
         newBucket=[]
@@ -97,15 +99,15 @@ def sortSubsets():
 def fillBucket(bucket, i):
     # go through the generators for each state
     for gen in gens:
-        newSubset = indexToSubset(i) * gen
+        newSubset = numpy.matmul(gen, indexToSubset(i))
         newIndex = subsetToIndex(newSubset)
         # if newIndex hasn't been marked, then add to bucket the same bucket and recurse.
-        if usedList(newIndex)==0:
+        if usedList[newIndex]==0:
             bucket.append(newIndex)
             fillBucket(bucket, newIndex)
         # if the newIndex has been marked, then update the bucketList
-        else:
-            BucketList[currentBucketIndex].extend(bucket)
+        #else:
+        #    BucketList[currentBucketIndex].extend(bucket)
 
 
 
